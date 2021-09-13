@@ -26,3 +26,4 @@ ALTER TABLE vpc_flow_logs
 ADD PARTITION (dt='YYYY-MM-dd')
 location 's3://your_log_bucket/prefix/AWSLogs/{account_id}/vpcflowlogs/{region_code}/YYYY/MM/dd';
 
+command: select * from vpc_flow_logs

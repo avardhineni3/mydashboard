@@ -66,7 +66,7 @@ variable "command" {
 }
 variable "workspacekey" {
   type    = string
-  default = "OS4PnAEOJW2+6ekDkOYh7Awja6sgCfvQKYUxvYg/XZ+ziRIpHrCxyuGIWRM2Z9sdjRThPqRmGY3RcN/BcR9y/w=="
+  default = 
 }
 variable "workspaceid" {
   type    = string

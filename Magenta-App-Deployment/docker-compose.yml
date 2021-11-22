@@ -1,0 +1,64 @@
+version: '3.8'
+networks:
+  magento:
+    driver: bridge
+services:
+    mysql:
+        build:
+          context: ./mysql
+          dockerfile: Dockerfile
+        container_name: mysql
+        restart: always
+        ports:
+          - "3306:3306"
+        environment:
+          - MYSQL_ROOT_PASSWORD=magentoadmin
+          - MYSQL_DATABASE=magentodb
+          - MYSQL_USER=magentoadmin
+          - MYSQL_PASSWORD=magentopassword
+        networks:
+          - magento
+    elasticsearch:
+        build:
+           context: ./elasticsearch
+           dockerfile: Dockerfile
+        container_name: elasticsearch
+        environment:
+          - node.name=elasticsearch
+          - cluster.name=es-cluster
+          - discovery.seed_hosts=localhost
+          - bootstrap.memory_lock=true
+          - "ES_JAVA_OPTS=-Xms512m -Xmx2048m"
+          - discovery.type=single-node
+    
+        ulimits:
+          memlock:    
+            soft: -1
+            hard: -1
+          nofile:
+            soft: 65536
+            hard: 65536
+        ports:
+          - 9200:9200
+        networks:
+          - magento
+    web:
+        build:
+          context: ./apache
+          dockerfile: Dockerfile
+        container_name: web
+        depends_on:
+          - mysql
+          - elasticsearch
+        restart: always
+        volumes:
+          - /magento:/app:cached
+        ports:
+          - "80:80"
+          - "443:443"
+          - "32823:22"
+        networks:
+          - magento
+        links:
+          - mysql
+          - elasticsearch
